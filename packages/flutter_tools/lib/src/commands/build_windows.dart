@@ -23,6 +23,11 @@ class BuildWindowsCommand extends BuildSubCommand {
     bool verboseHelp = false,
   }) : super(verboseHelp: verboseHelp) {
     addCommonDesktopBuildOptions(verboseHelp: verboseHelp);
+    argParser.addOption('target-platform',
+      defaultsTo: 'windows-x64',
+      allowed: <String>['windows-x64', 'windows-x86'],
+      help: 'The target platform for which the app is compiled.',
+    );
   }
 
   @override
@@ -53,6 +58,7 @@ class BuildWindowsCommand extends BuildSubCommand {
       throwToolExit('"build windows" only supported on Windows hosts.');
     }
     displayNullSafetyMode(buildInfo);
+    final TargetPlatform targetPlatform = getTargetPlatformForName(stringArg('target-platform') ?? 'windows-x64');
     await buildWindows(
       flutterProject.windows,
       buildInfo,
@@ -64,6 +70,7 @@ class BuildWindowsCommand extends BuildSubCommand {
         appFilenamePattern: 'app.so',
         flutterUsage: globals.flutterUsage,
       ),
+      targetPlatform: targetPlatform,
     );
     return FlutterCommandResult.success();
   }

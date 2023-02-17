@@ -24,15 +24,18 @@ class WindowsDevice extends DesktopDevice {
     required Logger logger,
     required FileSystem fileSystem,
     required OperatingSystemUtils operatingSystemUtils,
-  }) : super(
-      'windows',
-      platformType: PlatformType.windows,
-      ephemeral: false,
-      processManager: processManager,
-      logger: logger,
-      fileSystem: fileSystem,
-      operatingSystemUtils: operatingSystemUtils,
-  );
+  })  : _operatingSystemUtils = operatingSystemUtils,
+        super(
+          'windows',
+          platformType: PlatformType.windows,
+          ephemeral: false,
+          processManager: processManager,
+          logger: logger,
+          fileSystem: fileSystem,
+          operatingSystemUtils: operatingSystemUtils,
+        );
+
+  final OperatingSystemUtils _operatingSystemUtils;
 
   @override
   bool isSupported() => true;
@@ -41,7 +44,12 @@ class WindowsDevice extends DesktopDevice {
   String get name => 'Windows';
 
   @override
-  Future<TargetPlatform> get targetPlatform async => TargetPlatform.windows_x64;
+  late final Future<TargetPlatform> targetPlatform = () async {
+    if (_operatingSystemUtils.hostPlatform == HostPlatform.windows_x64) {
+      return TargetPlatform.windows_x64;
+    }
+    return TargetPlatform.windows_x86;
+  }();
 
   @override
   bool isSupportedForProject(FlutterProject flutterProject) {
@@ -64,6 +72,15 @@ class WindowsDevice extends DesktopDevice {
   @override
   String executablePathForDevice(covariant WindowsApp package, BuildMode buildMode) {
     return package.executable(buildMode);
+  }
+
+  @override
+  bool supportsRuntimeMode(BuildMode buildMode) {
+    if (_operatingSystemUtils.hostPlatform == HostPlatform.windows_x86) {
+      return buildMode != BuildMode.release && buildMode != BuildMode.profile;
+    } else {
+      return buildMode != BuildMode.jitRelease;
+    }
   }
 }
 

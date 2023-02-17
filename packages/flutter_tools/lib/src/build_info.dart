@@ -581,6 +581,7 @@ enum TargetPlatform {
   android_arm64,
   android_x64,
   android_x86,
+  windows_x86,
 }
 
 /// iOS and macOS target device architecture.
@@ -737,6 +738,8 @@ String getNameForTargetPlatform(TargetPlatform platform, {DarwinArch? darwinArch
       return 'web-javascript';
     case TargetPlatform.android:
       return 'android';
+    case TargetPlatform.windows_x86:
+      return 'windows-x86';
   }
 }
 
@@ -772,6 +775,8 @@ TargetPlatform getTargetPlatformForName(String platform) {
       return TargetPlatform.windows_x64;
     case 'web-javascript':
       return TargetPlatform.web_javascript;
+    case 'windows-x86':
+      return TargetPlatform.windows_x86;
   }
   throw Exception('Unsupported platform name "$platform"');
 }
@@ -834,6 +839,7 @@ String fuchsiaArchForTargetPlatform(TargetPlatform targetPlatform) {
     case TargetPlatform.tester:
     case TargetPlatform.web_javascript:
     case TargetPlatform.windows_x64:
+    case TargetPlatform.windows_x86:
       throw UnsupportedError('Unexpected Fuchsia platform $targetPlatform');
   }
 }
@@ -847,7 +853,7 @@ HostPlatform getCurrentHostPlatform() {
     return globals.os.hostPlatform;
   }
   if (globals.platform.isWindows) {
-    return HostPlatform.windows_x64;
+    return globals.os.hostPlatform;
   }
 
   globals.printWarning('Unsupported host platform, defaulting to Linux');
@@ -1079,6 +1085,8 @@ String getNameForTargetPlatformArch(TargetPlatform platform) {
       return 'x64';
     case TargetPlatform.linux_arm64:
       return 'arm64';
+    case TargetPlatform.windows_x86:
+      return 'x86';
     case TargetPlatform.android:
     case TargetPlatform.android_arm:
     case TargetPlatform.android_arm64:
@@ -1105,6 +1113,8 @@ String getNameForHostPlatformArch(HostPlatform platform) {
       return 'arm64';
     case HostPlatform.windows_x64:
       return 'x64';
+    case HostPlatform.windows_x86:
+      return 'x86';
   }
 }
 

@@ -11,6 +11,7 @@ import 'src/base/platform.dart';
 import 'src/base/template.dart';
 import 'src/base/terminal.dart';
 import 'src/base/user_messages.dart';
+import 'src/build_info.dart';
 import 'src/cache.dart';
 import 'src/commands/analyze.dart';
 import 'src/commands/assemble.dart';
@@ -78,6 +79,9 @@ Future<void> main(List<String> args) async {
   final bool daemon = args.contains('daemon');
   final bool runMachine = (args.contains('--machine') && args.contains('run')) ||
                           (args.contains('--machine') && args.contains('attach'));
+  if (args.contains('-dTargetPlatform=windows-x86')) {
+    globals.targetPlatform = TargetPlatform.windows_x86;
+  }
 
   // Cache.flutterRoot must be set early because other features use it (e.g.
   // enginePath's initializer uses it). This can only work with the real

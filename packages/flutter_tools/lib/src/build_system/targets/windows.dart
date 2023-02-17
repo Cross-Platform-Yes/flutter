@@ -57,16 +57,17 @@ class UnpackWindows extends Target {
       throw MissingDefineException(kBuildMode, name);
     }
     final BuildMode buildMode = getBuildModeForName(buildModeEnvironment);
+    final TargetPlatform targetPlatform = getTargetPlatformForName(environment.defines[kTargetPlatform]!);
     final String engineSourcePath = environment.artifacts
       .getArtifactPath(
         Artifact.windowsDesktopPath,
-        platform: TargetPlatform.windows_x64,
+        platform: targetPlatform,
         mode: buildMode,
       );
     final String clientSourcePath = environment.artifacts
       .getArtifactPath(
         Artifact.windowsCppClientWrapper,
-        platform: TargetPlatform.windows_x64,
+        platform: targetPlatform,
         mode: buildMode,
       );
     final Directory outputDirectory = environment.fileSystem.directory(
@@ -85,7 +86,7 @@ class UnpackWindows extends Target {
       clientSourcePaths: <String>[clientSourcePath],
       icuDataPath: environment.artifacts.getArtifactPath(
         Artifact.icuData,
-        platform: TargetPlatform.windows_x64
+        platform: targetPlatform
       )
     );
     final DepfileService depfileService = DepfileService(
